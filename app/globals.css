@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background-start: #f0f9ff;
+  --background-end: #e0f2fe;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --primary-color: #2563eb;
+  --secondary-color: #4f46e5;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --input-bg: #f8fafc;
+  --input-border: #cbd5e1;
+  --button-bg: #2563eb;
+  --button-text: #ffffff;
+  --sidebar-bg: #f1f5f9;
+  --sidebar-text: #1e293b;
+  --navbar-bg: #ffffff;
+  --navbar-border: #e2e8f0;
+  --chart-grid: #e2e8f0;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-text: #1e293b;
+}
+
+.dark {
+  --background-start: #0f172a;
+  --background-end: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --primary-color: #3b82f6;
+  --secondary-color: #6366f1;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --input-bg: #2a3a53;
+  --input-border: #475569;
+  --button-bg: #3b82f6;
+  --button-text: #f1f5f9;
+  --sidebar-bg: #0f172a;
+  --sidebar-text: #e2e8f0;
+  --navbar-bg: #1e293b;
+  --navbar-border: #334155;
+  --chart-grid: #334155;
+  --chart-tooltip-bg: #2a3a53;
+  --chart-tooltip-text: #f1f5f9;
+}
+
+body {
+  background: linear-gradient(to bottom right, var(--background-start), var(--background-end));
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 rounded-md transition-colors duration-300;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+  }
+  
+  .btn-primary:hover {
+    @apply brightness-110;
+  }
+
+  .card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    @apply rounded-lg shadow-md;
+  }
+
+  .input {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-primary);
+    @apply w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50;
+  }
+
+  .input:focus {
+    @apply ring-blue-500;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400;
+  }
+}
