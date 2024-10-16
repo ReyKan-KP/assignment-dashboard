@@ -13,7 +13,7 @@ const convertToCSV = (data: DashboardData[]) => {
   let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n";
 
   rows.forEach((rowArray) => {
-    let row = rowArray.join(",");
+    const row = rowArray.join(",");
     csvContent += row + "\n";
   });
 
