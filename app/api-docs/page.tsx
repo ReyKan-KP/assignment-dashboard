@@ -1,6 +1,6 @@
 // "use client"
 import { getApiDocs } from "@/lib/swagger";
-import ReactSwagger from "./react-swagger/page";
+import ReactSwagger from "@/components/react-swagger";
 
 export default async function IndexPage() {
   const spec = await getApiDocs();
