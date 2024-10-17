@@ -1,5 +1,8 @@
 # Interactive Dashboard
 
+## Deployed Link
+https://assignment-interactive-dashboard.vercel.app/
+
 ## Project Description
 
 This project is a Full Stack Development Intern Assignment focused on developing an interactive dashboard application using **Next.js**, **Recharts**, and **Supabase**. The dashboard is designed to display various metrics, support user authentication, and provide data visualization capabilities. It aims to offer a user-friendly interface while ensuring secure data management and real-time updates.
