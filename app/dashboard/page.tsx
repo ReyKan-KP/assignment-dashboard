@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // for navigation in Next.js
 import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import ChartWidget from "@/components/ChartWidget";
 import { Database } from "@/types/supabase";
+import { Session } from "@supabase/supabase-js";
 
 type DashboardData = Database["public"]["Tables"]["dashboard_data"]["Row"];
+
 const convertToCSV = (data: DashboardData[]) => {
   const headers = ["Category", "Value", "Created At"];
   const rows = data.map((row) => [row.category, row.value, row.created_at]);
@@ -20,27 +23,48 @@ const convertToCSV = (data: DashboardData[]) => {
 
   return encodeURI(csvContent);
 };
+
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData[]>([]);
   const [category, setCategory] = useState("");
   const [value, setValue] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-    const subscription = supabase
-      .channel("dashboard_data_changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "dashboard_data" },
-        fetchData
-      )
-      .subscribe();
+  const [session, setSession] = useState<Session | null>(null);
+  const router = useRouter();
 
-    return () => {
-      subscription.unsubscribe();
+  useEffect(() => {
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+
+      if (!session) {
+        router.push("/login");
+      }
     };
-  }, []);
+
+    checkSession();
+  }, [router]);
+
+  useEffect(() => {
+    if (session) {
+      fetchData();
+      const subscription = supabase
+        .channel("dashboard_data_changes")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "dashboard_data" },
+          fetchData
+        )
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [session]);
 
   const fetchData = async () => {
     try {
@@ -91,15 +115,21 @@ export default function Dashboard() {
   const lineData = data.filter((item) => item.category === "line");
   const barData = data.filter((item) => item.category === "bar");
   const pieData = data.filter((item) => item.category === "pie");
-const handleCSVExport = () => {
-  const csvData = convertToCSV(data);
-  const link = document.createElement("a");
-  link.setAttribute("href", csvData);
-  link.setAttribute("download", "dashboard_data.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+
+  const handleCSVExport = () => {
+    const csvData = convertToCSV(data);
+    const link = document.createElement("a");
+    link.setAttribute("href", csvData);
+    link.setAttribute("download", "dashboard_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  if (!session) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div
       className="flex flex-col h-screen"
@@ -111,7 +141,6 @@ const handleCSVExport = () => {
       </button>
       <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={isMenuOpen} />
-
         <div className="flex-1 p-6 overflow-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ChartWidget

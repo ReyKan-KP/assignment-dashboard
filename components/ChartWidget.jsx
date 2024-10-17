@@ -21,12 +21,10 @@ export default function ChartWidget({
   dataKeyY,
   title,
 }) {
-  // Sort the data by date in ascending order (if it's a line or bar chart)
   const sortedData = [...data].sort(
     (a, b) => new Date(a[dataKeyX]).getTime() - new Date(b[dataKeyX]).getTime()
   );
 
-  // Define a function to format the date
   const formatDate = (tick) => dayjs(tick).format("D MMM YY");
 
   return (
@@ -44,7 +42,7 @@ export default function ChartWidget({
             <XAxis
               dataKey={dataKeyX}
               stroke="var(--text-primary)"
-              tickFormatter={formatDate} // Apply the date formatter
+              tickFormatter={formatDate}
             />
             <YAxis stroke="var(--text-primary)" />
             <Tooltip
@@ -68,7 +66,7 @@ export default function ChartWidget({
             <XAxis
               dataKey={dataKeyX}
               stroke="var(--text-primary)"
-              tickFormatter={formatDate} // Apply the date formatter
+              tickFormatter={formatDate}
             />
             <YAxis stroke="var(--text-primary)" />
             <Tooltip

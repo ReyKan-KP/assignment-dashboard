@@ -5,7 +5,8 @@ import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import { Database } from "@/types/supabase";
-
+import { Session } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 type DashboardData = Database["public"]["Tables"]["dashboard_data"]["Row"];
 const convertToCSV = (data: DashboardData[]) => {
   const headers = ["Category", "Value", "Created At"];
@@ -25,22 +26,39 @@ export default function EditableTableWithLayout() {
   const [newRow, setNewRow] = useState({ category: "", value: "" });
   const [editedRow, setEditedRow] = useState({ category: "", value: "" });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+const [session, setSession] = useState<Session | null>(null);
+  const router = useRouter();
   useEffect(() => {
-    fetchData();
-    const subscription = supabase
-      .channel("dashboard_data_changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "dashboard_data" },
-        fetchData
-      )
-      .subscribe();
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
 
-    return () => {
-      subscription.unsubscribe();
+      if (!session) {
+        router.push("/login");
+      }
     };
-  }, []);
+
+    checkSession();
+  }, [router]);
+  useEffect(() => {
+    if (session) {
+      fetchData();
+      const subscription = supabase
+        .channel("dashboard_data_changes")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "dashboard_data" },
+          fetchData
+        )
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [session]);
 
   const fetchData = async () => {
     try {
@@ -109,7 +127,10 @@ const handleCSVExport = () => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-};
+  };
+   if (!session) {
+     return <div>Loading...</div>;
+   }
   return (
     <div
       className="flex flex-col h-screen"
