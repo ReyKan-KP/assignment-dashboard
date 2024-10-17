@@ -29,7 +29,7 @@ The primary goal of this project is to create a comprehensive dashboard that mee
 Clone this repository to your local machine using the following command:
 
 ```bash
-git clone https://github.com/your-username/project-repo.git
+git clone https://github.com/ReyKan-KP/assignment-dashboard.git
 ```
 
 > Replace `your-username` with your actual GitHub username.
@@ -39,7 +39,7 @@ git clone https://github.com/your-username/project-repo.git
 Navigate to the project directory and install the required dependencies:
 
 ```bash
-cd project-repo
+cd assignment-dashboard
 npm install
 ```
 
